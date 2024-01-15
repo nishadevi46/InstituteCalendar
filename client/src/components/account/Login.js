@@ -25,6 +25,17 @@ const LoginPage = () => {
       const onValueChange=(e)=>{
         setLogin({...login,[e.target.name]:e.target.value});
    }
+   const signupUser =async()=>{
+    let response= await API.userSignup(signup)
+    if(response.isSuccess){
+     setError('')
+     setSignup(signupIntialValue)
+     toggleAccount('login')
+    }
+    else{
+   setError('something went wrong! plz try later')
+    }
+ }
   return (
     <Flex
       align="center"
@@ -59,7 +70,7 @@ const LoginPage = () => {
         <Input placeholder="Username" onChange={(e)=>onInputChange(e)}/>
         <Input type="email" placeholder="Email" onChange={(e)=>onInputChange(e)} />
         <Input type="password" placeholder="Password" onChange={(e)=>onInputChange(e)} />
-        <Button colorScheme="teal" variant="outline" width="100%">
+        <Button colorScheme="teal" variant="outline" width="100%" onClick={()=>signupUser()}>
           SignUp
         </Button>
           <p>or</p>

@@ -1,6 +1,7 @@
 import express from 'express'
 const app = express()
 import Connection from './database/db.js'
+import Router from './router/route.js'
 import dotenv from 'dotenv'
 dotenv.config()
 const port = process.env.PORT || 8000
@@ -9,7 +10,7 @@ app.get('/',async(req,res)=>{
     res.send('hello')
 })
 
-
+app.use('/',Router)
 const USERNAME = process.env.DB_USERNAME;
 const PASSWORD=process.env.DB_PASSWORD;
 const URL= process.env.MONGODB_URI || `mongodb+srv://${USERNAME}:${PASSWORD}@calender.d5whsbu.mongodb.net/?retryWrites=true&w=majority`;
