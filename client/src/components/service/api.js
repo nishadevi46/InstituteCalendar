@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { API_NOTIFICATION_MESSAGES, SERVICE_URL } from '../constants/config'
-import { getAccessToken, getType } from '../utlis/common-utlis'
+import { API_NOTIFICATION_MESSAGES, SERVICE_URL } from '../../constants/config'
+
 const API_URL = 'http://localhost:8000'
 const axiosinstance = axios.create({
   baseURL: API_URL,
@@ -11,11 +11,6 @@ const axiosinstance = axios.create({
 })
 axiosinstance.interceptors.request.use(
   function(config) {
-    if (config.TYPE.params) {
-        config.params = config.TYPE.params
-    } else if (config.TYPE.query) {
-        config.url = config.url + '/' + config.TYPE.query;
-    }
     return config;
 },
 function(error) {
@@ -47,14 +42,14 @@ const processResponse = (response) => {
 
 const processError = (error) => {
   if (error.response) {
-    console.log("ERROR IN RESPONSE: ", error.toJSON());
+    console.log("ERROR IN RESPONSE: ",JSON.stringify(error));
     return {
       isError: true,
       message: API_NOTIFICATION_MESSAGES.responseFailure,
       code: error.response.status
     }
   } else if (error.request) {
-    console.log("ERROR IN RESPONSE: ", error.toJSON());
+    console.log("ERROR IN RESPONSE: ", JSON.stringify(error));
     return {
       isError: true,
       message: API_NOTIFICATION_MESSAGES.requestFailure,
@@ -62,7 +57,7 @@ const processError = (error) => {
     }
   }
   else {
-    console.log("ERROR IN RESPONSE: ", error.toJSON());
+    console.log("ERROR IN RESPONSE: ", JSON.stringify(error));
     return {
       isError: true,
       message: API_NOTIFICATION_MESSAGES.networkError,
@@ -79,10 +74,10 @@ for (const [key, value] of Object.entries(SERVICE_URL)) {
       url: value.url,
       data: value.method === 'DELETE' ? null : body,
       responseType: value.responseType,
-      headers: {
-        authorization: getAccessToken()
-      },
-      TYPE: getType(value, body),
+      // headers: {
+      //   authorization: getAccessToken()
+      // },
+      // TYPE: getType(value, body),
       onUploadProgress: function (progressEvent) {
         if (showUploadProgress) {
           let percentagecompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)

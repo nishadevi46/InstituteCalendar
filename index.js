@@ -3,17 +3,19 @@ const app = express()
 import Connection from './database/db.js'
 import Router from './router/route.js'
 import dotenv from 'dotenv'
+import bodyParser from 'body-parser'
+import cors from 'cors'
 dotenv.config()
 const port = process.env.PORT || 8000
 app.use(express.json())
-app.get('/',async(req,res)=>{
-    res.send('hello')
-})
 
+app.use(bodyParser.json({extended:true}))
+app.use(bodyParser.urlencoded({extended:true}))
+app.use(cors());
 app.use('/',Router)
 const USERNAME = process.env.DB_USERNAME;
 const PASSWORD=process.env.DB_PASSWORD;
-const URL= process.env.MONGODB_URI || `mongodb+srv://${USERNAME}:${PASSWORD}@calender.d5whsbu.mongodb.net/?retryWrites=true&w=majority`;
+const URL= process.env.MONGODB_URI || `mongodb+srv://${USERNAME}:${PASSWORD}@cluster0.poffjrh.mongodb.net/?retryWrites=true&w=majority`;
 Connection(URL)
 
 
