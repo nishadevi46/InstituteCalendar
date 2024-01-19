@@ -1,8 +1,9 @@
 
 import { Input, Button, Flex, VStack } from "@chakra-ui/react";
 import { API } from "../service/api";
-
+import { DataContext } from "../../context/DataProvider";
 import { useState, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 const signupIntialValue = {
   name: '',
   username: '',
@@ -19,6 +20,8 @@ const LoginPage = () => {
   const [signup, setSignup] = useState(signupIntialValue)
   const [login, setLogin] = useState(loginInitialValue)
   const [error, setError] = useState('')
+  const {setAccount}=useContext(DataContext)
+  const navigate = useNavigate()
   const toggleSignup = () => {
     account === 'login' ? toggleAccount('signup') : toggleAccount('login')
   }
@@ -39,6 +42,19 @@ const LoginPage = () => {
       setError('something went wrong! plz try later')
     }
   }
+  const loginUser= async()=>{
+    let response= await API.userLogin(login)
+    if(response.isSuccess){
+        setError('')
+        sessionStorage.setItem('accessToken', `Bearer ${response.data.accessToken}`);
+        sessionStorage.setItem('refreshToken', `Bearer ${response.data.refreshToken}`);
+        setAccount({username:response.data.username,name:response.data.name,email:response.data.email})
+        navigate('/')
+    }
+    else{
+     setError('something went wrong! plz try later')
+    }
+ }
   return (
     <Flex
       align="center"
@@ -52,11 +68,11 @@ const LoginPage = () => {
           borderRadius="md"
           padding={4}
           backgroundColor="white" >
-          <Input placeholder="Username" value={login.username} onChange={(e) => onValueChange(e)} />
+          <Input placeholder="Username" name='username' value={login.username} onChange={(e) => onValueChange(e)} />
           <Input type="email" placeholder="Email"  name='email'  value={login.email} onChange={(e) => onValueChange(e)} />
           <Input type="password"  name='password' placeholder="Password"  value={login.password} onChange={(e) => onValueChange(e)} />
           {error && <p>{error}</p>}
-          <Button colorScheme="blue" width="100%">
+          <Button colorScheme="blue" width="100%" onClick={()=>loginUser()}>
             Login
           </Button>
           <p>or</p>
